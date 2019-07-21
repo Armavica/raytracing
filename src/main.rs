@@ -1,5 +1,6 @@
 use clap::{App, Arg};
 use rand::Rng;
+use rand_distr::{UnitBall, Distribution};
 use image::{ImageBuffer};
 pub mod vec3;
 use vec3::Vec3;
@@ -150,13 +151,7 @@ pub fn chapter6() {
 }
 
 fn rand_in_unit_ball() -> Vec3<f32> {
-    let mut rng = rand::thread_rng();
-    loop {
-        let p = Vec3::from_array(rng.gen::<[f32; 3]>()) * 2. - Vec3::new(1., 1., 1.);
-        if p.squared_length() >= 1. {
-            return p
-        }
-    }
+    Vec3::from_array(UnitBall.sample(&mut rand::thread_rng()))
 }
 
 fn color7(r: &Ray<f32>, world: &[Sphere<f32>]) -> Vec3<f32> {
