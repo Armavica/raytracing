@@ -1,3 +1,4 @@
+use clap::{App, Arg};
 use rand::Rng;
 use image::{ImageBuffer};
 pub mod vec3;
@@ -183,5 +184,34 @@ pub fn chapter7() {
 }
 
 fn main() {
-    chapter7()
+    let matches = App::new("raytracing")
+        .arg(Arg::with_name("nbsamples")
+             .short("s")
+             .help("Number of samples for each pixel")
+             .takes_value(true))
+        .arg(Arg::with_name("width")
+             .short("w")
+             .help("Width of the image in pixels")
+             .takes_value(true))
+        .arg(Arg::with_name("height")
+             .short("h")
+             .help("Height of the image in pixels")
+             .takes_value(true))
+        .arg(Arg::with_name("output")
+             .short("o")
+             .help("Output file")
+             .takes_value(true))
+        .get_matches();
+    let height = matches.value_of("height").unwrap_or("512").parse().unwrap();
+    let width = matches.value_of("width").unwrap_or("1024").parse().unwrap();
+    let nbsamples = matches.value_of("nbsamples").unwrap_or("100").parse().unwrap();
+    let output = matches.value_of("output").unwrap_or("test.png");
+    let world = vec![
+        Sphere::new(Vec3::new(0., 0., -1.), 0.5),
+        Sphere::new(Vec3::new(0., -100.5, -1.), 100.),
+    ];
+    Camera::default()
+        .size(width, height)
+        .nbsamples(nbsamples)
+        .image(|ray| color7(&ray, &world), output);
 }

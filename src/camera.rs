@@ -19,6 +19,15 @@ impl<F: Float> Camera<F> {
     pub fn new(lower_left_corner: Vec3<F>, horizontal: Vec3<F>, vertical: Vec3<F>, origin: Vec3<F>, nx: u32, ny: u32, ns: usize) -> Self {
         Camera { lower_left_corner, horizontal, vertical, origin, nx, ny, ns }
     }
+    pub fn size(mut self, w: u32, h: u32) -> Self {
+        self.nx = w;
+        self.ny = h;
+        self
+    }
+    pub fn nbsamples(mut self, ns: usize) -> Self {
+        self.ns = ns;
+        self
+    }
     pub fn get_ray(&self, u: F, v: F) -> Ray<F> {
         Ray::new(self.origin, self.lower_left_corner + self.horizontal*u + self.vertical*v - self.origin)
     }
