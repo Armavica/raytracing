@@ -49,9 +49,9 @@ impl<F: Float> Default for Camera<F> {
             horizontal: Vec3::new(F::from(4).unwrap(), F::zero(), F::zero()),
             vertical: Vec3::new(F::zero(), F::from(2).unwrap(), F::zero()),
             origin: Vec3::new(F::zero(), F::zero(), F::zero()),
-            nx: 256,
-            ny: 128,
-            ns: 100,
+            nx: 1024,
+            ny: 512,
+            ns: 500,
         }
     }
 }

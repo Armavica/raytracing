@@ -159,7 +159,7 @@ fn rand_in_unit_ball() -> Vec3<f32> {
 }
 
 fn color7(r: &Ray<f32>, world: &[Sphere<f32>]) -> Vec3<f32> {
-    match world.hit(r, 0., std::f32::MAX) {
+    match world.hit(r, 0.0001, std::f32::MAX) {
         Some(hr) => {
             let target = hr.p + hr.normal + rand_in_unit_ball();
             color7(&Ray::new(hr.p, target - hr.p), world) / 2.
