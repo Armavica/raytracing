@@ -1,8 +1,8 @@
-use num_traits::Float;
-use crate::vec3::Vec3;
-use crate::ray::Ray;
 use crate::hitable::{Hit, HitRecord};
 use crate::material::Material;
+use crate::ray::Ray;
+use crate::vec3::Vec3;
+use num_traits::Float;
 
 pub struct Sphere<F: Float> {
     center: Vec3<F>,
@@ -12,7 +12,11 @@ pub struct Sphere<F: Float> {
 
 impl<F: Float> Sphere<F> {
     pub fn new(center: Vec3<F>, radius: F, material: Material<F>) -> Self {
-        Sphere { center, radius, material }
+        Sphere {
+            center,
+            radius,
+            material,
+        }
     }
 }
 
@@ -22,23 +26,22 @@ impl<F: Float> Hit for Sphere<F> {
         let oc = ray.origin() - self.center;
         let a = ray.dot(&ray.direction());
         let b = oc.dot(&ray.direction());
-        let c = oc.dot(&oc) - self.radius*self.radius;
-        let discr = b*b - a*c;
+        let c = oc.dot(&oc) - self.radius * self.radius;
+        let discr = b * b - a * c;
         if discr > F::zero() {
-            let temp = (-b - (b*b-a*c).sqrt()) / a;
+            let temp = (-b - (b * b - a * c).sqrt()) / a;
             if t_min < temp && temp < t_max {
                 let p = ray.point_at_parameter(temp);
                 let normal = (p - self.center) / self.radius;
-                return Some(HitRecord::new(temp, p, normal, self.material))
+                return Some(HitRecord::new(temp, p, normal, self.material));
             }
-            let temp = (-b + (b*b-a*c).sqrt()) / a;
+            let temp = (-b + (b * b - a * c).sqrt()) / a;
             if t_min < temp && temp < t_max {
                 let p = ray.point_at_parameter(temp);
                 let normal = (p - self.center) / self.radius;
-                return Some(HitRecord::new(temp, p, normal, self.material))
+                return Some(HitRecord::new(temp, p, normal, self.material));
             }
         }
         None
     }
 }
-

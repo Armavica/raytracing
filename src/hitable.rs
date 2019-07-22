@@ -1,10 +1,10 @@
+use crate::material::Material;
+use crate::ray::Ray;
+use crate::vec3::Vec3;
 use num_traits::Float;
 use std::cmp;
-use std::cmp::PartialOrd;
 use std::cmp::PartialEq;
-use crate::vec3::Vec3;
-use crate::ray::Ray;
-use crate::material::Material;
+use std::cmp::PartialOrd;
 
 pub struct HitRecord<F: Float> {
     pub t: F,
@@ -35,7 +35,12 @@ impl<F: Float> Ord for HitRecord<F> {
 
 impl<F: Float> HitRecord<F> {
     pub fn new(t: F, p: Vec3<F>, normal: Vec3<F>, material: Material<F>) -> Self {
-        HitRecord { t, p, normal, material }
+        HitRecord {
+            t,
+            p,
+            normal,
+            material,
+        }
     }
 }
 
@@ -50,4 +55,3 @@ impl<S: Hit> Hit for &[S] {
         self.iter().filter_map(|obj| obj.hit(r, t_min, t_max)).min()
     }
 }
-

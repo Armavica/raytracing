@@ -1,8 +1,8 @@
+use crate::hitable::HitRecord;
+use crate::ray::Ray;
+use crate::vec3::Vec3;
 use num_traits::Float;
 use rand::Rng;
-use crate::vec3::Vec3;
-use crate::ray::Ray;
-use crate::hitable::HitRecord;
 
 #[derive(Clone, Copy, Debug)]
 pub enum Material<F: Float> {
@@ -26,22 +26,26 @@ impl<F: Float> Material<F> {
             }
             Material::Metal(albedo, fuzz) => {
                 let reflected = ray.direction().unit().reflect(&hr.normal);
-                let scattered = Ray::new(hr.p, reflected + Vec3::rand_in_unit_ball()* *fuzz);
-                Some((*albedo, scattered))
-                    .filter(|(_, s)| s.dot(&hr.normal) > F::zero())
+                let scattered = Ray::new(hr.p, reflected + Vec3::rand_in_unit_ball() * *fuzz);
+                Some((*albedo, scattered)).filter(|(_, s)| s.dot(&hr.normal) > F::zero())
             }
             Material::Dielectric(n) => {
                 let albedo = Vec3::new(F::one(), F::one(), F::one());
                 let reflected = ray.direction().reflect(&hr.normal);
                 let cos = ray.dot(&hr.normal) / ray.direction().length();
-                let (out_normal, ni_over_nt, cos) =
-                    if cos > F::zero() {
-                        (-hr.normal, *n, (F::one() - *n * *n * (F::one() - cos*cos)).sqrt())
-                    } else {
-                        (hr.normal, n.recip(), -cos)
-                    };
+                let (out_normal, ni_over_nt, cos) = if cos > F::zero() {
+                    (
+                        -hr.normal,
+                        *n,
+                        (F::one() - *n * *n * (F::one() - cos * cos)).sqrt(),
+                    )
+                } else {
+                    (hr.normal, n.recip(), -cos)
+                };
                 if let Some(refracted) = ray.direction().refract(&out_normal, ni_over_nt) {
-                    if F::from(rand::thread_rng().gen::<f32>()).unwrap() > Material::schlick(cos, *n) {
+                    if F::from(rand::thread_rng().gen::<f32>()).unwrap()
+                        > Material::schlick(cos, *n)
+                    {
                         return Some((albedo, Ray::new(hr.p, refracted)));
                     }
                 }
@@ -50,4 +54,3 @@ impl<F: Float> Material<F> {
         }
     }
 }
-
