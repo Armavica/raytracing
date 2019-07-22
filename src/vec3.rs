@@ -3,6 +3,7 @@ use std::iter;
 use std::cmp;
 use num_traits::Float;
 use num_traits::identities::Zero;
+use rand_distr::{UnitBall, Distribution};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Vec3<F: Float> {
@@ -30,6 +31,11 @@ impl<F: Float> Vec3<F> {
     pub fn normalize(&mut self) {
         *self /= self.length();
     }
+    pub fn unit(&self) -> Self {
+        let mut v = *self;
+        v.normalize();
+        v
+    }
     pub fn rgb(&self) -> Option<[u8; 3]> {
         let x = (self.x*F::from(255.999).unwrap()).floor().to_u8();
         let y = (self.y*F::from(255.999).unwrap()).floor().to_u8();
@@ -47,6 +53,23 @@ impl<F: Float> Vec3<F> {
             self.y*other.z - self.z*other.y,
             self.z*other.x - self.x*other.z,
             self.x*other.y - self.y*other.x)
+    }
+    pub fn rand_in_unit_ball() -> Vec3<F> {
+        let xyz: [f32; 3] = UnitBall.sample(&mut rand::thread_rng());
+        Vec3::new(F::from(xyz[0]).unwrap(), F::from(xyz[1]).unwrap(), F::from(xyz[2]).unwrap())
+    }
+    pub fn reflect(&self, n: &Self) -> Self {
+        *self - *n * self.dot(n) * F::from(2).unwrap()
+    }
+    pub fn refract(&self, n: &Self, r: F) -> Option<Self> {
+        let uv = self.unit();
+        let dt = uv.dot(n);
+        let discr = F::one() - r*r*(F::one()-dt*dt);
+        if discr > F::zero() {
+            Some((uv - *n*dt)*r - *n*discr.sqrt())
+        } else {
+            None
+        }
     }
 }
 
@@ -75,6 +98,13 @@ impl<F: Float> ops::Mul<F> for Vec3<F> {
     type Output = Self;
     fn mul(self, other: F) -> Self::Output {
         Self::new(self.x*other, self.y*other, self.z*other)
+    }
+}
+
+impl<F: Float> ops::Mul<Self> for Vec3<F> {
+    type Output = Self;
+    fn mul(self, other: Self) -> Self::Output {
+        Self::new(self.x*other.x, self.y*other.y, self.z*other.z)
     }
 }
 

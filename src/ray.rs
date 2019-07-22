@@ -22,4 +22,7 @@ impl<F: Float> Ray<F> {
     pub fn point_at_parameter(&self, t: F) -> Vec3<F> {
         self.a + self.b*t
     }
+    pub fn dot(&self, v: &Vec3<F>) -> F {
+        self.direction().dot(v)
+    }
 }

@@ -4,11 +4,13 @@ use std::cmp::PartialOrd;
 use std::cmp::PartialEq;
 use crate::vec3::Vec3;
 use crate::ray::Ray;
+use crate::material::Material;
 
 pub struct HitRecord<F: Float> {
     pub t: F,
     pub p: Vec3<F>,
     pub normal: Vec3<F>,
+    pub material: Material<F>,
 }
 
 impl<F: Float> PartialEq for HitRecord<F> {
@@ -32,8 +34,8 @@ impl<F: Float> Ord for HitRecord<F> {
 }
 
 impl<F: Float> HitRecord<F> {
-    pub fn new(t: F, p: Vec3<F>, normal: Vec3<F>) -> Self {
-        HitRecord { t, p, normal }
+    pub fn new(t: F, p: Vec3<F>, normal: Vec3<F>, material: Material<F>) -> Self {
+        HitRecord { t, p, normal, material }
     }
 }
 

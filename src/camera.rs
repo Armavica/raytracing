@@ -53,10 +53,9 @@ impl<F: Float> Camera<F> {
 impl<F: Float> Default for Camera<F> {
     fn default() -> Self {
         Camera {
-            lower_left_corner: Vec3::new(F::from(-2).unwrap(),
-                F::from(-1).unwrap(), F::from(-1).unwrap()),
+            lower_left_corner: Vec3::new(-F::one()-F::one(), -F::one(), -F::one()),
             horizontal: Vec3::new(F::from(4).unwrap(), F::zero(), F::zero()),
-            vertical: Vec3::new(F::zero(), F::from(2).unwrap(), F::zero()),
+            vertical: Vec3::new(F::zero(), F::one()+F::one(), F::zero()),
             origin: Vec3::new(F::zero(), F::zero(), F::zero()),
             nx: 1024,
             ny: 512,
